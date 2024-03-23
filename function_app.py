@@ -38,4 +38,4 @@ def http_trigger(req: func.HttpRequest) -> func.HttpResponse:
         item = container.read_item(item=item_id, partition_key=item_id)
         item["count"] += 1
         container.replace_item(item=item_id, body=item)
-        return func.HttpResponse("Count incremented", status_code=200)
+        return func.HttpResponse("View count incremented", status_code=200)
