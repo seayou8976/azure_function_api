@@ -1,0 +1,39 @@
+name: Build and Deploy to Azure Function App
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: 'Checkout GitHub Action'
+      uses: actions/checkout@master
+      
+    - name: Set up Python version
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.11
+
+    - name: 'Login via Azure CLI'
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: 'Run Azure Functions Action'
+      uses: Azure/functions-action@v1
+      id: fa
+      with:
+        app-name: <Your Function App Name>
+        package: .
+        publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
+      env:
+        COSMOS_DB_URL: ${{ secrets.COSMOS_DB_URL }}
+        COSMOS_DB_KEY: ${{ secrets.COSMOS_DB_KEY }}
+
+    - name: 'Logout of Azure CLI'
+      run: |
+        az logout
