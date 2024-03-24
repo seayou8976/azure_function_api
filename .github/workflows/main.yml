@@ -1,12 +1,15 @@
 name: Build and Deploy to Azure Function App
 
 on:
-  push:
-    branches: [ main ]
+    push:
+        branches: [ main ]
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
+    env:
+      COSMOS_DB_URL: ${{ secrets.COSMOS_DB_URL }}
+      COSMOS_DB_KEY: ${{ secrets.COSMOS_DB_KEY }}
 
     steps:
     - name: 'Checkout GitHub Action'
@@ -29,9 +32,6 @@ jobs:
         app-name: sy4azureresume-visitorcount
         package: .
         publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
-      env:
-        COSMOS_DB_URL: ${{ secrets.COSMOS_DB_URL }}
-        COSMOS_DB_KEY: ${{ secrets.COSMOS_DB_KEY }}
 
     - name: 'Logout of Azure CLI'
       run: |
