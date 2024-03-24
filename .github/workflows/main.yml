@@ -26,4 +26,5 @@ jobs:
       with:
         app-name: sy4faresume
         package: .
+        respect-funcignore: true
         publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
