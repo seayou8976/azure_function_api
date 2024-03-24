@@ -33,7 +33,7 @@ resource "azurerm_cosmosdb_account" "sy4cosmos" {
   kind                = "GlobalDocumentDB"
 
   enable_automatic_failover = true
-  enable_free_tier = true
+  enable_free_tier          = true
 
   consistency_policy {
     consistency_level = "Session"
@@ -76,23 +76,40 @@ resource "azurerm_service_plan" "sy4sp" {
   sku_name            = "Y1"
 }
 
+resource "azurerm_application_insights" "sy4ai" {
+  name                = "sy4aibackend"
+  location            = azurerm_resource_group.sy4rg-backend.location
+  resource_group_name = azurerm_resource_group.sy4rg-backend.name
+  application_type    = "web"
+}
+
 resource "azurerm_linux_function_app" "sy4app" {
-  name                       = "sy4faresume"
-  location                   = azurerm_resource_group.sy4rg-backend.location
-  resource_group_name        = azurerm_resource_group.sy4rg-backend.name
-  service_plan_id            = azurerm_service_plan.sy4sp.id
-  storage_account_name       = azurerm_storage_account.sy4sa-backend.name
-  storage_account_access_key = azurerm_storage_account.sy4sa-backend.primary_access_key
+  name                                           = "sy4faresume"
+  location                                       = azurerm_resource_group.sy4rg-backend.location
+  resource_group_name                            = azurerm_resource_group.sy4rg-backend.name
+  service_plan_id                                = azurerm_service_plan.sy4sp.id
+  storage_account_name                           = azurerm_storage_account.sy4sa-backend.name
+  storage_account_access_key                     = azurerm_storage_account.sy4sa-backend.primary_access_key
+  builtin_logging_enabled                        = false
+  webdeploy_publish_basic_authentication_enabled = false
+  https_only                                     = true
 
   app_settings = {
-    "FUNCTIONS_WORKER_RUNTIME" = "python"
-    "COSMOS_DB_KEY" = azurerm_cosmosdb_account.sy4cosmos.primary_key
-    "COSMOS_DB_URL" = azurerm_cosmosdb_account.sy4cosmos.endpoint
+    "APPINSIGHTS_INSTRUMENTATIONKEY" = azurerm_application_insights.sy4ai.instrumentation_key
+    "FUNCTIONS_WORKER_RUNTIME"       = "python"
+    "FUNCTIONS_EXTENSION_VERSION"    = "~4"
+    "COSMOS_DB_KEY"                  = azurerm_cosmosdb_account.sy4cosmos.primary_key
+    "COSMOS_DB_URL"                  = azurerm_cosmosdb_account.sy4cosmos.endpoint
   }
+
+
 
   site_config {
     cors {
       allowed_origins = ["https://resume.seanyoung.me"]
+    }
+    application_stack {
+      python_version = "3.11"
     }
   }
 }
