@@ -20,14 +20,6 @@ jobs:
       with:
         python-version: 3.11
 
-    - name: 'Resolve Project Dependencies Using Pip'
-      shell: bash
-      run: |
-        pushd './sy4fsresume'
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt --target=".python_packages/lib/site-packages"
-        popd
-
     - name: 'Run Azure Functions Action'
       uses: Azure/functions-action@v1.5.1
       id: fa
@@ -35,7 +27,3 @@ jobs:
         app-name: sy4faresume
         package: .
         publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
-
-    - name: 'Logout of Azure CLI'
-      run: |
-        az logout
