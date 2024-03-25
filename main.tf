@@ -60,7 +60,7 @@ resource "azurerm_cosmosdb_sql_database" "sy4db" {
 }
 
 resource "azurerm_cosmosdb_sql_container" "sy4container" {
-  name                = "VistorCount"
+  name                = "VisitorCount"
   resource_group_name = azurerm_resource_group.sy4rg-backend.name
   account_name        = azurerm_cosmosdb_account.sy4cosmos.name
   database_name       = azurerm_cosmosdb_sql_database.sy4db.name
@@ -100,6 +100,7 @@ resource "azurerm_linux_function_app" "sy4app" {
     "FUNCTIONS_EXTENSION_VERSION"    = "~4"
     "COSMOS_DB_KEY"                  = azurerm_cosmosdb_account.sy4cosmos.primary_key
     "COSMOS_DB_URL"                  = azurerm_cosmosdb_account.sy4cosmos.endpoint
+    "SCM_DO_BUILD_DURING_DEPLOYMENT" = true
   }
 
 
