@@ -3,7 +3,7 @@ import azure.functions as func
 import os
 from azure.cosmos import CosmosClient
 
-app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUD)
+app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
 
 
 @app.route(route="http_trigger", methods=["GET", "POST"])
